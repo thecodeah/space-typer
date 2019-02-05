@@ -193,6 +193,9 @@ class Game(arcade.Window):
             self.state = GameStates.RUNNING
     
     def on_key_press(self, key, modifiers):
+        if key > 127:
+            return
+            
         if self.focus_word == None:
             for word in self.word_list:
                 if word.word[0] == chr(key):
