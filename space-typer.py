@@ -5,6 +5,8 @@ from enum import Enum
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+WORD_ROW_COUNT = 20
+
 words = ("pull", "limping", "thaw", "placid", "record", "untidy", "tested",
         "heartbreaking", "hurt", "assorted", "servant", "stale", "talk",
         "snake", "desk", "advertisement", "balance", "cut", "animated",
@@ -75,7 +77,7 @@ class Word:
         self.word = word
         self.row = row
         self.x = SCREEN_WIDTH
-        self.y = int(SCREEN_HEIGHT / 20) * row
+        self.y = (int((SCREEN_HEIGHT - 50) / WORD_ROW_COUNT) * row) + 50
         self.in_focus = False
     
     def draw(self):
@@ -143,7 +145,7 @@ class Game(arcade.Window):
         row = int()
         occupied_rows = set()
         while True:
-            row = random.randrange(20)
+            row = random.randrange(WORD_ROW_COUNT)
             for word in self.word_list:
                 occupied_rows.add(word.row)
             if row not in occupied_rows:
