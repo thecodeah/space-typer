@@ -118,16 +118,26 @@ class Game(arcade.Window):
             
     
     def draw_game_over(self):
-        arcade.draw_text("Game Over", 200, 350, arcade.color.WHITE, 54)
-        arcade.draw_text("Click to restart", 270, 280, arcade.color.WHITE, 24)
-        arcade.draw_text(f"Score : {self.score}", 10, SCREEN_HEIGHT - 30, arcade.color.WHITE, 15)
+        arcade.draw_text("Game Over",
+            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) + 54,
+            arcade.color.WHITE, 54,
+            align="center", anchor_x="center", anchor_y="center"
+        )
+
+        arcade.draw_text("Click to restart",
+            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) - 24,
+            arcade.color.WHITE, 24,
+            align="center", anchor_x="center", anchor_y="center"
+        )
+
+        arcade.draw_text(f"Score : {self.score}", 10, SCREEN_HEIGHT - 10, arcade.color.WHITE, 15, anchor_x="left", anchor_y="top")
     
     def draw_game(self):
         for word in self.word_list:
             word.draw()
         
-        arcade.draw_text(f"Score : {self.score}", 10, 20, arcade.color.WHITE, 14)
-        arcade.draw_text(f"Lives : {self.lives}", SCREEN_WIDTH - 100, 20, arcade.color.WHITE, 14)
+        arcade.draw_text(f"Score : {self.score}", 15, 15, arcade.color.WHITE, 14)
+        arcade.draw_text(f"Lives : {self.lives}", SCREEN_WIDTH - 15, 15, arcade.color.WHITE, 14, align="right", anchor_x="right", anchor_y="baseline")
 
     def on_draw(self):
         arcade.start_render()
