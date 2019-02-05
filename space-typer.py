@@ -59,12 +59,12 @@ class Star:
     def __init__(self):
         self.x = random.randrange(SCREEN_WIDTH + 200)
         self.y = random.randrange(SCREEN_HEIGHT)
-
         self.size = random.randrange(4)
         self.speed = random.randrange(20, 40)
+        self.color = random.choice([arcade.color.PURPLE, arcade.color.BLUEBERRY])
     
     def draw(self):
-        arcade.draw_circle_filled(self.x, self.y, self.size, arcade.color.PURPLE)
+        arcade.draw_circle_filled(self.x, self.y, self.size, self.color)
     
     def reset_pos(self):
         self.x = random.randrange(SCREEN_WIDTH, SCREEN_WIDTH + 100)
@@ -195,7 +195,7 @@ class Game(arcade.Window):
     def on_key_press(self, key, modifiers):
         if key > 127:
             return
-            
+
         if self.focus_word == None:
             for word in self.word_list:
                 if word.word[0] == chr(key):
