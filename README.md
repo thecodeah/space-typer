@@ -10,7 +10,7 @@ pip install --user -r requirements.txt && python space-typer.py
 ```
 Using pipenv :
 ```
-pipenv run python space-typer.py
+pipenv sync && pipenv run python space-typer.py
 ```
 
 ![screenshot](screenshot.png "Screenshot")
