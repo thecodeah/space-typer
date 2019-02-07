@@ -124,7 +124,7 @@ class Game(arcade.Window):
             align="center", anchor_x="center", anchor_y="center"
         )
 
-        arcade.draw_text("Click to restart",
+        arcade.draw_text("Press SPACE to restart",
             SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) - 24,
             arcade.color.WHITE, 24,
             align="center", anchor_x="center", anchor_y="center"
@@ -199,14 +199,13 @@ class Game(arcade.Window):
             if self.lives <= 0:
                 self.state = GameStates.GAME_OVER
     
-    def on_mouse_press(self, x, y, button, modifiers):
-        if self.state == GameStates.GAME_OVER:
-            self.setup()
-            self.state = GameStates.RUNNING
-    
     def on_key_press(self, key, modifiers):
         if key > 127:
             return
+
+        if self.state == GameStates.GAME_OVER and key == 32:
+            self.setup()
+            self.state = GameStates.RUNNING
 
         if self.focus_word == None:
             for word in self.word_list:
