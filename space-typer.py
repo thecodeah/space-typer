@@ -1,5 +1,7 @@
+import os
 import arcade
 import random
+import shelve
 from enum import Enum
 
 SCREEN_WIDTH = 800
@@ -93,6 +95,8 @@ class Game(arcade.Window):
         super().__init__(width, height, title="Space Typer")
         arcade.set_background_color((5, 2, 27))
 
+        self.high_score = int()
+
         self.score = int()
         self.lives = int()
         self.state = None
@@ -119,18 +123,21 @@ class Game(arcade.Window):
     
     def draw_game_over(self):
         arcade.draw_text("Game Over",
-            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) + 54,
+            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) + 68,
             arcade.color.WHITE, 54,
             align="center", anchor_x="center", anchor_y="center"
         )
 
         arcade.draw_text("Press SPACE to restart",
-            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2) - 24,
+            SCREEN_WIDTH / 2, (SCREEN_HEIGHT / 2),
             arcade.color.WHITE, 24,
             align="center", anchor_x="center", anchor_y="center"
         )
 
-        arcade.draw_text(f"Score : {self.score}", 10, SCREEN_HEIGHT - 10, arcade.color.WHITE, 15, anchor_x="left", anchor_y="top")
+        arcade.draw_text(f"Current score : {self.score}", 15, 15,arcade.color.WHITE, 14,)
+        arcade.draw_text(f"High score : {self.high_score}", SCREEN_WIDTH - 15, 15, arcade.color.WHITE, 14,
+            align="right", anchor_x="right", anchor_y="baseline"
+        )
     
     def draw_game(self):
         for word in self.word_list:
@@ -197,6 +204,16 @@ class Game(arcade.Window):
                     self.create_word()
             
             if self.lives <= 0:
+                path = os.path.join(os.path.expanduser("~"), ".space-typer")
+                score_file = shelve.open(path)
+                new_high_score = int()
+                if score_file.get("high_score") == None:
+                    new_high_score = self.score
+                else:
+                    new_high_score = max([self.score, score_file["high_score"]])
+                score_file["high_score"] = new_high_score
+                self.high_score = new_high_score
+
                 self.state = GameStates.GAME_OVER
     
     def on_key_press(self, key, modifiers):
