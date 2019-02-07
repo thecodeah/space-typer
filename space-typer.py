@@ -187,7 +187,7 @@ class Game(arcade.Window):
         if self.state == GameStates.RUNNING:
             for word in self.word_list:
                 word.x -= 100 * delta_time
-                if word.x < 20:
+                if word.x < 0:
                     if self.focus_word == word:
                         self.focus_word = None
 
