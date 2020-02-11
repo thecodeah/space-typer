@@ -142,7 +142,18 @@ class Game(arcade.Window):
                 self.high_score = new_high_score
 
                 self.state = GameStates.GAME_OVER
-    
+
+    def _get_leftmost_word_starting_with(self, character):
+        words_starting_with_given_character = []
+        for word in self.word_list:
+            if word.word[0].lower() == character:
+                words_starting_with_given_character.append(word)
+        if len(words_starting_with_given_character) == 0:
+            return None
+        else:
+            leftmost_word = min(words_starting_with_given_character, key=lambda word: word.x)
+            return leftmost_word
+
     def on_key_press(self, key, modifiers):
         if key > 127:
             return
@@ -151,19 +162,17 @@ class Game(arcade.Window):
             self.setup()
             self.state = GameStates.RUNNING
 
-        if self.focus_word == None:
-            for word in self.word_list:
-                if word.word[0] == chr(key):
-                    self.focus_word = word
-
-                    word.attack()
-                    word.in_focus = True
-                    break
+        if self.focus_word is None:
+            self.focus_word = self._get_leftmost_word_starting_with(chr(key))
+            if self.focus_word is not None:
+                self.focus_word.in_focus = True
+                self.focus_word.attack()
         else:
-            if self.focus_word.word[0] == chr(key):
-                    self.focus_word.attack()
-                    if self.focus_word.word == "":
-                        self.word_list.discard(self.focus_word)
-                        self.focus_word = None
-                        self.score += 1
-                        self.create_word()
+            if self.focus_word.word[0].lower() == chr(key):
+                self.focus_word.attack()
+
+        if self.focus_word.word == "":
+            self.word_list.discard(self.focus_word)
+            self.focus_word = None
+            self.score += 1
+            self.create_word()
