@@ -13,12 +13,14 @@ class GameStates(Enum):
     RUNNING = 1
 
 class Game(arcade.Window):
-    def __init__(self, width, height):
+    def __init__(self, width, height, words, word_rows_count=20):
         super().__init__(width, height, title="Space Typer")
         arcade.set_background_color((5, 2, 27))
 
         self.screen_width = width
         self.screen_height = height
+        self.words = words
+        self.word_rows_count = word_rows_count
 
         self.high_score = int()
 
@@ -87,7 +89,7 @@ class Game(arcade.Window):
         row = int()
         occupied_rows = set()
         while True:
-            row = random.randrange(src.word.WORD_ROW_COUNT)
+            row = random.randrange(self.word_rows_count)
             for word in self.word_list:
                 occupied_rows.add(word.row)
             if row not in occupied_rows:
@@ -100,11 +102,11 @@ class Game(arcade.Window):
             occupied_chars.add(word.word[0])
         rand_word = str()
         while True:
-            rand_word = random.choice(src.word.WORD_LIST)
+            rand_word = random.choice(self.words)
             if rand_word[0] not in occupied_chars:
                 break
         
-        self.word_list.add(src.word.Word(rand_word, row, self.screen_width, self.screen_height))
+        self.word_list.add(src.word.Word(rand_word, row, self.screen_width, self.screen_height, self.word_rows_count))
 
     def create_star(self):
         self.star_list.add(src.star.Star(self.screen_width, self.screen_height))
