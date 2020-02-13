@@ -15,3 +15,18 @@ pipenv sync && pipenv run python main.py
 ```
 
 ![screenshot](screenshot.png "Screenshot")
+
+
+## Play with other words
+
+Run the program with the option `--word-list <list-file>.yaml` to use the
+custom words in the indicated file, for example
+
+    python main.py --word-list words-en.yaml
+
+This file is a [yaml](https://yaml.org/) file that you can easily edit with a
+text editor.
+
+Note for foreign languages: Currently only the basic set of
+[Ascii characters](https://en.wikipedia.org/wiki/ASCII)
+are supported, i.e. no umlauts, accents etc.
