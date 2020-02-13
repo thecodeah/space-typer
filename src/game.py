@@ -61,6 +61,12 @@ class Game(arcade.Window):
             align="center", anchor_x="center", anchor_y="center"
         )
 
+        arcade.draw_text("q to quit",
+                         self.screen_width / 2, (self.screen_height / 2) - 35,
+                         arcade.color.WHITE, 24,
+                         align="center", anchor_x="center", anchor_y="center"
+                         )
+
         arcade.draw_text(f"Current score : {self.score}", 15, 15,arcade.color.WHITE, 14,)
         arcade.draw_text(f"High score : {self.high_score}", self.screen_width - 15, 15, arcade.color.WHITE, 14,
             align="right", anchor_x="right", anchor_y="baseline"
@@ -158,9 +164,12 @@ class Game(arcade.Window):
         if key > 127:
             return
 
-        if self.state == GameStates.GAME_OVER and key == 32:
-            self.setup()
-            self.state = GameStates.RUNNING
+        if self.state == GameStates.GAME_OVER:
+            if key == 32:
+                self.setup()
+                self.state = GameStates.RUNNING
+            elif key == ord("q"):
+                raise SystemExit
 
         if self.focus_word is None:
             self.focus_word = self._get_leftmost_word_starting_with(chr(key))
