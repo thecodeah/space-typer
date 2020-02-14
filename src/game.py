@@ -13,12 +13,14 @@ class GameStates(Enum):
     RUNNING = 1
 
 class Game(arcade.Window):
-    def __init__(self, width, height):
+    def __init__(self, width, height, words, word_rows_count=20):
         super().__init__(width, height, title="Space Typer")
         arcade.set_background_color((5, 2, 27))
 
         self.screen_width = width
         self.screen_height = height
+        self.words = words
+        self.word_rows_count = word_rows_count
 
         self.high_score = int()
 
@@ -59,6 +61,12 @@ class Game(arcade.Window):
             align="center", anchor_x="center", anchor_y="center"
         )
 
+        arcade.draw_text("q to quit",
+                         self.screen_width / 2, (self.screen_height / 2) - 35,
+                         arcade.color.WHITE, 24,
+                         align="center", anchor_x="center", anchor_y="center"
+                         )
+
         arcade.draw_text(f"Current score : {self.score}", 15, 15,arcade.color.WHITE, 14,)
         arcade.draw_text(f"High score : {self.high_score}", self.screen_width - 15, 15, arcade.color.WHITE, 14,
             align="right", anchor_x="right", anchor_y="baseline"
@@ -87,7 +95,7 @@ class Game(arcade.Window):
         row = int()
         occupied_rows = set()
         while True:
-            row = random.randrange(src.word.WORD_ROW_COUNT)
+            row = random.randrange(self.word_rows_count)
             for word in self.word_list:
                 occupied_rows.add(word.row)
             if row not in occupied_rows:
@@ -100,11 +108,11 @@ class Game(arcade.Window):
             occupied_chars.add(word.word[0])
         rand_word = str()
         while True:
-            rand_word = random.choice(src.word.WORD_LIST)
+            rand_word = random.choice(self.words)
             if rand_word[0] not in occupied_chars:
                 break
         
-        self.word_list.add(src.word.Word(rand_word, row, self.screen_width, self.screen_height))
+        self.word_list.add(src.word.Word(rand_word, row, self.screen_width, self.screen_height, self.word_rows_count))
 
     def create_star(self):
         self.star_list.add(src.star.Star(self.screen_width, self.screen_height))
@@ -140,28 +148,40 @@ class Game(arcade.Window):
                 self.high_score = new_high_score
 
                 self.state = GameStates.GAME_OVER
-    
+
+    def _get_leftmost_word_starting_with(self, character):
+        words_starting_with_given_character = []
+        for word in self.word_list:
+            if word.word[0].lower() == character:
+                words_starting_with_given_character.append(word)
+        if len(words_starting_with_given_character) == 0:
+            return None
+        else:
+            leftmost_word = min(words_starting_with_given_character, key=lambda word: word.x)
+            return leftmost_word
+
     def on_key_press(self, key, modifiers):
         if key > 127:
             return
 
-        if self.state == GameStates.GAME_OVER and key == 32:
-            self.setup()
-            self.state = GameStates.RUNNING
+        if self.state == GameStates.GAME_OVER:
+            if key == 32:
+                self.setup()
+                self.state = GameStates.RUNNING
+            elif key == ord("q"):
+                raise SystemExit
 
-        if self.focus_word == None:
-            for word in self.word_list:
-                if word.word[0] == chr(key):
-                    self.focus_word = word
-
-                    word.attack()
-                    word.in_focus = True
-                    break
+        if self.focus_word is None:
+            self.focus_word = self._get_leftmost_word_starting_with(chr(key))
+            if self.focus_word is not None:
+                self.focus_word.in_focus = True
+                self.focus_word.attack()
         else:
-            if self.focus_word.word[0] == chr(key):
-                    self.focus_word.attack()
-                    if self.focus_word.word == "":
-                        self.word_list.discard(self.focus_word)
-                        self.focus_word = None
-                        self.score += 1
-                        self.create_word()
+            if self.focus_word.word[0].lower() == chr(key):
+                self.focus_word.attack()
+
+        if self.focus_word.word == "":
+            self.word_list.discard(self.focus_word)
+            self.focus_word = None
+            self.score += 1
+            self.create_word()
